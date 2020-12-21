@@ -8,6 +8,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class NasabahDao {
     private EntityManager entityManager;
     private EntityTransaction entityTransaction;

@@ -244,6 +244,7 @@ public class DatabaseRecvMq {
                 for(Session obj : session) {
                     if (obj.getUsernames().equalsIgnoreCase(myNsb.getUsername()) && obj.getPasswords().equalsIgnoreCase(myNsb.getPassword())) {
                         statusLogin = true;
+//                        myNsb.setIsLogin(true);
                         break;
                     }
                 }
@@ -271,14 +272,15 @@ public class DatabaseRecvMq {
         try{
             connectToRabbitMQ();
             channel = connection.createChannel();
-            channel.queueDeclare("doLogoutNasabah", false, false, false, null);
+            channel.queueDeclare(   "doLogoutNasabah", false, false, false, null);
             DeliverCallback deliverCallback = (consumerTag, delivery ) -> {
                 String idNsbString = new String(delivery.getBody(), StandardCharsets.UTF_8);
                 System.out.println(" [x] Received '" + idNsbString + "'");
-                connectJPA();
+//                Nasabah myNsb = new Gson().fromJson(idNsbString, Nasabah.class);
                 if (!session.isEmpty()) {
                     session.clear();
                     send.sendLogout("Logout success!");
+//                    myNsb.setIsLogin(false);
                 } else {
                     send.sendLogout("Logout fail! no session detected");
                 }

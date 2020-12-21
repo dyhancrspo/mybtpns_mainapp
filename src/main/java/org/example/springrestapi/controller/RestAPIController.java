@@ -9,10 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -47,8 +45,8 @@ public class RestAPIController {
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -create :  " + e);
         }
-        return new ResponseEntity<>("Success, data created! \n", HttpStatus.OK);
-    }
+//        return new ResponseEntity<>("Success, data created! \n", HttpStatus.OK); }
+        return new ResponseEntity<>("Success, data created! \n", HttpStatus.OK); }
 
     //--------------------------Update Data Nasabah-------------------------------------
     @RequestMapping(value = "/nasabah/{id}", method = RequestMethod.PUT)
@@ -105,9 +103,11 @@ public class RestAPIController {
     @RequestMapping(value = "/login/", method = RequestMethod.POST)
     public ResponseEntity<?> loginNsb(@RequestBody Nasabah nasabah) {
         try {
-            Thread.sleep(100);
             SendMqRestAPI.loginNasabah(new Gson().toJson(nasabah));
             restApiReceive.RecvLoginMsg();
+            String response = restApiReceive.getLoginmessage();
+//            restApiReceive.loginApiRes();
+            Thread.sleep(1000);
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -login :  " + e);
         }
@@ -125,13 +125,15 @@ public class RestAPIController {
 //        }
 //        return new ResponseEntity<>("Logout Success, \nHave a Nice Day, Enjoy banking with Dummy Bank! ", HttpStatus.OK);
 //    }
+
+
     //--------------------------Do Logout Nasabah-------------------------------------
     @RequestMapping(value = "/logout/", method = RequestMethod.GET)
     public ResponseEntity<?> logutNsb() {
         try {
-            Thread.sleep(100);
             SendMqRestAPI.logoutNasabah();
             restApiReceive.RecvLogoutMsg();
+            Thread.sleep(1000);
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -logout :  " + e);
         }
