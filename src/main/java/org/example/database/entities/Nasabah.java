@@ -15,10 +15,9 @@ public class Nasabah {
     String phonenumber;
     String username;
     String password;
-    String status;
+    String status = "Active";
     String accountnumber;
     Integer balance = 500000;
-    Boolean isLogin = false;
 
     public Nasabah(){}
 
@@ -75,14 +74,6 @@ public class Nasabah {
         this.status = status;
     }
 
-    public Boolean getIsLogin() {
-        return isLogin;
-    }
-
-    public void setIsLogin(Boolean isLogin) {
-        this.isLogin = isLogin;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -113,12 +104,12 @@ public class Nasabah {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Nasabah nasabah = (Nasabah) o;
-        return Objects.equals(id, nasabah.id) && Objects.equals(fullname, nasabah.fullname) && Objects.equals(address, nasabah.address) && Objects.equals(phonenumber, nasabah.phonenumber) && Objects.equals(username, nasabah.username) && Objects.equals(password, nasabah.password) && Objects.equals(status, nasabah.status) && Objects.equals(accountnumber, nasabah.accountnumber) && Objects.equals(balance, nasabah.balance) && Objects.equals(isLogin, nasabah.isLogin);
+        return Objects.equals(id, nasabah.id) && Objects.equals(fullname, nasabah.fullname) && Objects.equals(address, nasabah.address) && Objects.equals(phonenumber, nasabah.phonenumber) && Objects.equals(username, nasabah.username) && Objects.equals(password, nasabah.password) && Objects.equals(status, nasabah.status) && Objects.equals(accountnumber, nasabah.accountnumber) && Objects.equals(balance, nasabah.balance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullname, address, phonenumber, username, password, status, accountnumber, balance, isLogin);
+        return Objects.hash(id, fullname, address, phonenumber, username, password, status, accountnumber, balance);
     }
 
     @Override
@@ -133,7 +124,6 @@ public class Nasabah {
                 ", status='" + status + '\'' +
                 ", accountnumber='" + accountnumber + '\'' +
                 ", balance=" + balance +
-                ", isLogin=" + isLogin +
                 '}';
     }
 }

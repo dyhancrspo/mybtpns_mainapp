@@ -31,7 +31,7 @@ public class RecvMqRestAPI {
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
+            System.out.println(" [x] Received receiveFromDatabase : '" + message + "'");
             this.message = message;
         };
         channel.basicConsume("messageFromDatabase", true, deliverCallback, consumerTag -> { });
@@ -44,38 +44,114 @@ public class RecvMqRestAPI {
 
 
 
-    public void RecvLoginMsg() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        channel.queueDeclare("sendLogin", false, false, false, null);
-        System.out.println(" [*] Waiting for messages from database");
+//    public void RecvLoginMsg() throws IOException, TimeoutException {
+//        ConnectionFactory factory = new ConnectionFactory();
+//        factory.setHost("localhost");
+//        Connection connection = factory.newConnection();
+//        Channel channel = connection.createChannel();
+//        channel.queueDeclare("sendLogin", false, false, false, null);
+//        System.out.println(" [*] Waiting for messages from database");
+//
+//        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+//            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+//            System.out.println(" [x] Received RecvLoginMsg : '" + message + "'");
+//            setLoginmessage(message);
+//        };
+//        channel.basicConsume("sendLogin", true, deliverCallback, consumerTag -> { });
+//
+//    }
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
-            setLoginmessage(message);
-        };
-        channel.basicConsume("sendLogin", true, deliverCallback, consumerTag -> { });
+    public String RecvLoginMsg() throws IOException, TimeoutException {
+        String loginResponse = "";
+        try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost("localhost");
+            Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
 
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), "UTF-8");
+                System.out.println(" [x] Received '" + message + "'");
+                this.message = message;
+            };
+            channel.basicConsume("sendLogin", true, deliverCallback, consumerTag -> {
+            });
+            TimeUnit.SECONDS.sleep(1);
+            if (!this.message.equals("")) {
+                JSONObject object = new JSONObject();
+//              object.put("id", message);
+                object.put("response", 200);
+                object.put("status", "Success");
+                object.put("message", "Success Login");
+                loginResponse = object.toJSONString();
+            } else {
+                JSONObject object = new JSONObject();
+                object.put("response", 400);
+                object.put("status", "Error");
+                object.put("message", "Error Login");
+                loginResponse = object.toJSONString();
+            }
+        } catch (Exception e) {
+            System.out.println("Exception login Res: " + e);
+        }
+        return loginResponse;
     }
 
-    public void RecvLogoutMsg() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        channel.queueDeclare("sendLogout", false, false, false, null);
-        System.out.println(" [*] Waiting for messages from database");
+//    public void RecvLogoutMsg() throws IOException, TimeoutException {
+//        ConnectionFactory factory = new ConnectionFactory();
+//        factory.setHost("localhost");
+//        Connection connection = factory.newConnection();
+//        Channel channel = connection.createChannel();
+//        channel.queueDeclare("sendLogout", false, false, false, null);
+//        System.out.println(" [*] Waiting for messages from database");
+//
+//        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+//            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+//            System.out.println(" [x] Received RecvLogoutMsg : '" + message + "'");
+//            setLogoutmessage(message);
+//        };
+//        channel.basicConsume("sendLogout", true, deliverCallback, consumerTag -> { });
+//    }
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
-            setLogoutmessage(message);
-        };
-        channel.basicConsume("sendLogout", true, deliverCallback, consumerTag -> { });
+    public String RecvLogoutMsg() throws IOException, TimeoutException {
+        String logoutResponse = "";
+        try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost("localhost");
+            Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
+
+            channel.queueDeclare("sendLogout", false, false, false, null);
+            System.out.println(" [*] Waiting for messages from database");
+
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println(" [x] Received '" + message + "'");
+                this.message = message;
+            };
+            channel.basicConsume("sendLogout", true, deliverCallback, consumerTag -> { });
+            TimeUnit.SECONDS.sleep(1);
+            if (!this.message.equals("0")) {
+                JSONObject object = new JSONObject();
+                object.put("response", 200);
+                object.put("status", "Success");
+                object.put("message", "Success Logout");
+                logoutResponse = object.toJSONString();
+            } else {
+                JSONObject object = new JSONObject();
+                object.put("response", 400);
+                object.put("status", "Error");
+                object.put("message", "Error Logout");
+                logoutResponse = object.toJSONString();
+            }
+        } catch (Exception e) {
+            System.out.println("Exception logout: " + e);
+        }
+        return logoutResponse;
     }
+
+
+
 
     public void RecvDataUser() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
@@ -88,7 +164,7 @@ public class RecvMqRestAPI {
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
+            System.out.println(" [x] Received RecvDataUserMsg : '" + message + "'");
             setDatamessage(message);
         };
         channel.basicConsume("sendNasabahData", true, deliverCallback, consumerTag -> { });
@@ -127,81 +203,6 @@ public class RecvMqRestAPI {
     }
 
 
-//    ------------------ ej ----------------------
-
-    public String loginApiRes() throws IOException, TimeoutException {
-        String loginResponse = "";
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
-
-
-            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + message + "'");
-                this.message = message;
-            };
-            channel.basicConsume("messageFromDatabase", true, deliverCallback, consumerTag -> {
-            });
-            TimeUnit.SECONDS.sleep(1);
-            if (!this.message.equals("0")) {
-                JSONObject object = new JSONObject();
-                object.put("response", 200);
-                object.put("status", "Success");
-                object.put("message", "Success Login");
-                loginResponse = object.toJSONString();
-            } else {
-                JSONObject object = new JSONObject();
-                object.put("response", 400);
-                object.put("status", "Error");
-                object.put("message", "Error Login");
-                loginResponse = object.toJSONString();
-            }
-        } catch (Exception e) {
-            System.out.println("Exception login Res: " + e);
-        }
-
-        return loginResponse;
-    }
-
-    public String logoutApiRes() throws IOException, TimeoutException {
-        String loginResponse = "";
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
-
-
-            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), "UTF-8");
-                System.out.println(" [x] Received '" + message + "'");
-                this.message = message;
-            };
-            channel.basicConsume("messageFromDatabase", true, deliverCallback, consumerTag -> {
-            });
-            TimeUnit.SECONDS.sleep(1);
-            if (!this.message.equals("0")) {
-                JSONObject object = new JSONObject();
-                object.put("response", 200);
-                object.put("status", "Success");
-                object.put("message", "Success Logout");
-                loginResponse = object.toJSONString();
-            } else {
-                JSONObject object = new JSONObject();
-                object.put("response", 400);
-                object.put("status", "Error");
-                object.put("message", "Error Login");
-                loginResponse = object.toJSONString();
-            }
-        } catch (Exception e) {
-            System.out.println("Exception login Res: " + e);
-        }
-
-        return loginResponse;
-    }
 
 
 

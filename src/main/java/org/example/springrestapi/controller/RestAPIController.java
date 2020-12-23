@@ -1,6 +1,7 @@
 package org.example.springrestapi.controller;
 
 import com.google.gson.Gson;
+import net.minidev.json.JSONObject;
 import org.example.database.entities.Nasabah;
 import org.example.springrestapi.SpringbootDummyBankMain;
 import org.example.springrestapi.rabbitmq.*;
@@ -36,7 +37,7 @@ public class RestAPIController {
     }
 
     //--------------------------Create Mahasiswa-------------------------------------
-    @RequestMapping(value = "/nasabah/", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> createNsb(@RequestBody Nasabah nasabah) {
         try {
             SendMqRestAPI.addNasabah(new Gson().toJson(nasabah));
@@ -45,7 +46,6 @@ public class RestAPIController {
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -create :  " + e);
         }
-//        return new ResponseEntity<>("Success, data created! \n", HttpStatus.OK); }
         return new ResponseEntity<>("Success, data created! \n", HttpStatus.OK); }
 
     //--------------------------Update Data Nasabah-------------------------------------
@@ -86,58 +86,33 @@ public class RestAPIController {
         return new ResponseEntity<>("Data deleted!!! ", HttpStatus.OK);
     }
 
-//    //--------------------------Do Login Nasabah-------------------------------------
-//    @RequestMapping(value = "/nasabah/login/{id}", method = RequestMethod.PUT)
-//    public ResponseEntity<?> loginNsb(@PathVariable("id") Long id) {
-////    public ResponseEntity<?> loginNsb(@PathVariable("id") Long id, @RequestBody Nasabah nasabah) {
-//        try {
-//            SendMqRestAPI.loginNasabah(Long.toString(id));
-////            SendMqRestAPI.loginNasabah(new Gson().toJson(nasabah));
-//        }catch (Exception e){
-//            System.out.println("ERROR on RestApiController -login :  " + e);
-//        }
-//        return new ResponseEntity<>("Login Success, Welcome to Dummy Bank! ", HttpStatus.OK);
-//    }
 
     //--------------------------Do Login Nasabah-------------------------------------
     @RequestMapping(value = "/login/", method = RequestMethod.POST)
     public ResponseEntity<?> loginNsb(@RequestBody Nasabah nasabah) {
         try {
-            SendMqRestAPI.loginNasabah(new Gson().toJson(nasabah));
-            restApiReceive.RecvLoginMsg();
-            String response = restApiReceive.getLoginmessage();
-//            restApiReceive.loginApiRes();
             Thread.sleep(1000);
+            SendMqRestAPI.loginNasabah(new Gson().toJson(nasabah));
+            return new ResponseEntity<>(restApiReceive.RecvLoginMsg(), HttpStatus.OK);
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -login :  " + e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(restApiReceive.getLoginmessage(), HttpStatus.OK);
     }
-
-
-//    //--------------------------Do Logout Nasabah-------------------------------------
-//    @RequestMapping(value = "/nasabah/logout/{id}", method = RequestMethod.PUT)
-//    public ResponseEntity<?> logutNsb(@PathVariable("id") Long id) {
-//        try {
-//            SendMqRestAPI.logoutNasabah(Long.toString(id));
-//        }catch (Exception e){
-//            System.out.println("ERROR on RestApiController -login :  " + e);
-//        }
-//        return new ResponseEntity<>("Logout Success, \nHave a Nice Day, Enjoy banking with Dummy Bank! ", HttpStatus.OK);
-//    }
 
 
     //--------------------------Do Logout Nasabah-------------------------------------
     @RequestMapping(value = "/logout/", method = RequestMethod.GET)
     public ResponseEntity<?> logutNsb() {
         try {
-            SendMqRestAPI.logoutNasabah();
-            restApiReceive.RecvLogoutMsg();
             Thread.sleep(1000);
+            SendMqRestAPI.logoutNasabah();
+            return new ResponseEntity<>(restApiReceive.RecvLogoutMsg(), HttpStatus.OK);
         }catch (Exception e){
             System.out.println("ERROR on RestApiController -logout :  " + e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
-        return new ResponseEntity<>(restApiReceive.getLogoutmessage(), HttpStatus.OK);
     }
 
 

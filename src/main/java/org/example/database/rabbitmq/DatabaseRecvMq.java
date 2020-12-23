@@ -129,20 +129,23 @@ public class DatabaseRecvMq {
             channel.queueDeclare("findDataNasabah", false, false, false, null);
             DeliverCallback deliverCallback = (consumerTag, delivery ) -> {
                 String idNsbString = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + idNsbString + "'");
+                System.out.println(" [x] Received findDataById : '" + idNsbString + "'");
                 connectJPA();
                 try {
                     Nasabah nasabah = nasabahDao.findId(idNsbString);
 //                    Nasabah nasabah = nasabahDao.find(idNsbString);
                     boolean statusLogin = false;
+//                    nasabah.getIsLogin();
                     for (Session obj: session){
                         if (nasabah != null){
                             if (obj.getUsernames().equalsIgnoreCase(nasabah.getUsername()) && obj.getPasswords().equalsIgnoreCase(nasabah.getPassword())){
                                 statusLogin = true;
+//                                nasabah.setIsLogin(true);
                                 break;
                             }
                         }
                     }  if (statusLogin) {
+//                    }  if (nasabah.getIsLogin()) {
                         String nasabahString = new Gson().toJson(nasabah);
                         if(nasabahDao.isRegistered(nasabahString)){
                             send.sendNasabahData(nasabahString);
@@ -152,8 +155,6 @@ public class DatabaseRecvMq {
                     } else {
                         send.sendNasabahData("Login is required, please Login first!");
                     }
-
-
                     send.sendToRestApi(new Gson().toJson(nasabah));
                 } catch (TimeoutException e) {
                     e.printStackTrace();
@@ -237,25 +238,26 @@ public class DatabaseRecvMq {
             channel.queueDeclare("doLoginNasabah", false, false, false, null);
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String idNsbString = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + idNsbString + "'");
+                System.out.println(" [x] Received loginNasabah : '" + idNsbString + "'");
                 connectJPA();
-                Nasabah myNsb = new Gson().fromJson(idNsbString, Nasabah.class);
+                Nasabah nasabah = new Gson().fromJson(idNsbString, Nasabah.class);
                 boolean statusLogin = false;
+//                nasabah.setIsLogin(false);
                 for(Session obj : session) {
-                    if (obj.getUsernames().equalsIgnoreCase(myNsb.getUsername()) && obj.getPasswords().equalsIgnoreCase(myNsb.getPassword())) {
+                    if (obj.getUsernames().equalsIgnoreCase(nasabah.getUsername()) && obj.getPasswords().equalsIgnoreCase(nasabah.getPassword())) {
                         statusLogin = true;
-//                        myNsb.setIsLogin(true);
+//                        nasabah.setIsLogin(true);
                         break;
                     }
                 }
                 if(statusLogin) {
-                    send.sendLogin(myNsb.getUsername() + " has already login");
+//                if(nasabah.getIsLogin()) {
+                    send.sendLogin(nasabah.getUsername() + " has already login");
                 } else {
                     nasabahDao.checkPassword(idNsbString);
-                    session.add(new Session(myNsb.getUsername(), myNsb.getPassword()));
+                    session.add(new Session(nasabah.getUsername(), nasabah.getPassword()));
                     send.sendLogin("Login Berhasil");
                 }
-//                nasabahDao.doLogin(idNsbString);
                 commitJPA();
             };
             channel.basicConsume("doLoginNasabah", true, deliverCallback, consumerTag -> {
@@ -266,25 +268,21 @@ public class DatabaseRecvMq {
     }
 
 
-
-
     public void logoutNasabah(){
         try{
             connectToRabbitMQ();
             channel = connection.createChannel();
             channel.queueDeclare(   "doLogoutNasabah", false, false, false, null);
             DeliverCallback deliverCallback = (consumerTag, delivery ) -> {
-                String idNsbString = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + idNsbString + "'");
-//                Nasabah myNsb = new Gson().fromJson(idNsbString, Nasabah.class);
+                String msg = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println(" [x] Received logoutNasabah : '" + msg + "'");
+                connectJPA();
                 if (!session.isEmpty()) {
                     session.clear();
                     send.sendLogout("Logout success!");
-//                    myNsb.setIsLogin(false);
                 } else {
                     send.sendLogout("Logout fail! no session detected");
                 }
-//                nasabahDao.doLogout(idNsbString);
                 commitJPA();
             };
             channel.basicConsume("doLogoutNasabah", true, deliverCallback, consumerTag -> {

@@ -72,47 +72,8 @@ public class NasabahDao {
         Nasabah nasabah = entityManager.find(Nasabah.class, Long.valueOf(id));
         entityManager.remove(nasabah);
     }
-//
-//    public void doLogin(String nsbString) {
-//        Nasabah currentState = new Gson().fromJson(nsbString, Nasabah.class);
-//        Nasabah nextState = entityManager.findAll
-//    }
 
 
-//  Yang Betul
-    public void doLogin(String id) {
-//    public void doLogin(String myNsb, String id) {
-        Nasabah nasabah = entityManager.find(Nasabah.class, Long.valueOf(id));
-//        Nasabah cekNasabah = new Gson().fromJson(myNsb, Nasabah.class);
-//        if(cekNasabah.getUsername().equals(nasabah.getUsername()) && cekNasabah.getPassword().equals(nasabah.getPassword())) {
-            Boolean statusLogin = true;
-            nasabah.setIsLogin(statusLogin);
-//        }
-    }
-
-//    public void doLogin(String myNsb, String id) {
-//        Nasabah nasabah = entityManager.find(Nasabah.class, Long.valueOf(id));
-//        Nasabah cekNasabah = new Gson().fromJson(myNsb, Nasabah.class);
-//        if(cekNasabah.getUsername().equals(nasabah.getUsername()) && cekNasabah.getPassword().equals(nasabah.getPassword())) {
-//            Boolean statusLogin = true;
-//            nasabah.setIsLogin(statusLogin);
-//        }
-//    }
-
-//    public void doLogin(Nasabah nasabah) {
-//        String select = "SELECT id FROM datanasabah WHERE username=:username and password=:password";
-//        Query query = entityManager.createQuery(select);
-//        query.setParameter("username", nasabah.getUsername());
-//        query.setParameter("password", nasabah.getPassword());
-//        Boolean statusLogin = true;
-//        nasabah.setIsLogin(statusLogin);
-//    }
-
-    public void doLogout(String id) {
-        Nasabah nasabah = entityManager.find(Nasabah.class, Long.valueOf(id));
-        Boolean statusLogin = false;
-        nasabah.setIsLogin(statusLogin);
-    }
 
     public boolean isRegistered(String nasabahString) {
         List<Nasabah> listAllNasabah = getAllNsb();

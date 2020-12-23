@@ -19,7 +19,7 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("getAlldataNasabah", false, false, false, null);
             channel.basicPublish("", "getAlldataNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + nasabahString + "'");
+            System.out.println(" [x] Sent getAll : '" + nasabahString + "'");
         }
     }
 
@@ -31,7 +31,7 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("createDataNasabah", false, false, false, null);
             channel.basicPublish("", "createDataNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + nasabahString + "'");
+            System.out.println(" [x] Sent addNasabah : '" + nasabahString + "'");
         }
     }
 
@@ -43,7 +43,7 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("deleteDataNasabah", false, false, false, null);
             channel.basicPublish("", "deleteDataNasabah", null, idString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + idString + "'");
+            System.out.println(" [x] Sent deleteNasabahById : '" + idString + "'");
         }
     }
 
@@ -55,7 +55,7 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("findDataNasabah", false, false, false, null);
             channel.basicPublish("", "findDataNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + nasabahString + "'");
+            System.out.println(" [x] Sent findDataById : '" + nasabahString + "'");
         }
     }
 
@@ -67,7 +67,7 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("updateDataNasabah", false, false, false, null);
             channel.basicPublish("", "updateDataNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + nasabahString + "'");
+            System.out.println(" [x] Sent updateNasabah : '" + nasabahString + "'");
         }
     }
 
@@ -79,22 +79,10 @@ public class SendMqRestAPI {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare("doLoginNasabah", false, false, false, null);
             channel.basicPublish("", "doLoginNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + nasabahString + "'");
+            System.out.println(" [x] Sent loginNasabah :'" + nasabahString + "'");
         }
     }
 
-    //Logout Nasabah
-    //Change Status Login Nasabah to Logout
-//    public static void logoutNasabah(String nasabahString) throws IOException, TimeoutException {
-//        ConnectionFactory factory = new ConnectionFactory();
-//        factory.setHost("localhost");
-//        try (Connection connection = factory.newConnection();
-//             Channel channel = connection.createChannel()) {
-//            channel.queueDeclare("doLogoutNasabah", false, false, false, null);
-//            channel.basicPublish("", "doLogoutNasabah", null, nasabahString.getBytes(StandardCharsets.UTF_8));
-//            System.out.println(" [x] Sent '" + nasabahString + "'");
-//        }
-//    }
     public static void logoutNasabah() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -103,7 +91,7 @@ public class SendMqRestAPI {
             String strings ="Request Logout";
             channel.queueDeclare("doLogoutNasabah", false, false, false, null);
             channel.basicPublish("", "doLogoutNasabah", null, strings.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + strings + "'");
+            System.out.println(" [x] Sent logoutNasabah : '" + strings + "'");
         }
     }
 }
