@@ -2,8 +2,8 @@ package org.example.springrestapi.controller;
 
 import com.google.gson.Gson;
 import net.minidev.json.JSONObject;
-import org.example.database.entities.Nasabah;
-import org.example.springrestapi.SpringbootDummyBankMain;
+import org.example.bankserver.entities.Nasabah;
+import org.example.springrestapi.BankRestAPI;
 import org.example.springrestapi.rabbitmq.*;
 
 import org.slf4j.Logger;
@@ -16,11 +16,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @RestController
-@RequestMapping("/dummybank/api")
+@RequestMapping("/api/mybtpns")
 
 public class RestAPIController {
     public final RecvMqRestAPI restApiReceive = new RecvMqRestAPI();
-    public final Logger logger = LoggerFactory.getLogger(SpringbootDummyBankMain.class);
+    public final Logger logger = LoggerFactory.getLogger(BankRestAPI.class);
 
     //--------------------------Get All Nasabah-------------------------------------
     @RequestMapping(value = "/nasabah/", method = RequestMethod.GET)
@@ -61,18 +61,70 @@ public class RestAPIController {
         return new ResponseEntity<>("Success, data updated! ", HttpStatus.OK);
     }
 
-    //--------------------------Find Data Nasabah by Id-------------------------------------
-    @RequestMapping(value = "/nasabah/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> findNsb(@PathVariable("id") Long id) {
+
+//    //--------------------------Find Data Nasabah by Id-------------------------------------
+//    @RequestMapping(value = "/nasabah/{id}", method = RequestMethod.GET)
+//    public ResponseEntity<?> findNsb(@PathVariable("id") Long id) {
+//        try {
+//            SendMqRestAPI.findDataById(Long.toString(id));
+////            SendMqRestAPI.findDataById(new Gson().toJson(id));
+//            restApiReceive.RecvDataUser();
+//            Thread.sleep(1000);
+//        }catch (Exception e){
+//            System.out.println("ERROR on RestApiController -findbyid :  " + e);
+//        }
+//        return new ResponseEntity<>(restApiReceive.getDatamessage(), HttpStatus.OK);
+//    }
+
+    //--------------------------Find Data Nasabah by Username-------------------------------------
+    @RequestMapping(value = "/nasabah/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> findNsb(@PathVariable("username") String username) {
         try {
-            SendMqRestAPI.findDataById(Long.toString(id));
-//            SendMqRestAPI.findDataById(new Gson().toJson(id));
-            restApiReceive.RecvDataUser();
             Thread.sleep(1000);
-        }catch (Exception e){
+            SendMqRestAPI.findDataById(username);
+//            restApiReceive.RecvDataUser();
+            return new ResponseEntity<>(restApiReceive.RecvDataUser(), HttpStatus.OK);
+        } catch (Exception e) {
             System.out.println("ERROR on RestApiController -findbyid :  " + e);
+            JSONObject object = new JSONObject();
+            object.put("response",400);
+            object.put("status","Error");
+            object.put("message","Error on get Saldo");
+            return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(restApiReceive.getDatamessage(), HttpStatus.OK);    }
+    }
+
+    //--------------------------Get Saldo Nasabah by Username-------------------------------------
+    @RequestMapping(value = "/saldo/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> getSaldoNsb(@PathVariable("username") String username) {
+        try {
+            SendMqRestAPI.getSaldoNasabah(username);
+            return new ResponseEntity<>(restApiReceive.RecvSaldoUser(), HttpStatus.OK);
+        }catch (Exception e){
+            System.out.println("error = " + e);
+            JSONObject object = new JSONObject();
+            object.put("response",400);
+            object.put("status","Error");
+            object.put("message","Error on get Saldo");
+            return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //--------------------------Get Mutasi Nasabah by Username-------------------------------------
+    @RequestMapping(value = "/mutasi/{accountnumber}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMutasi(@PathVariable("accountnumber") String accountnumber) {
+        try {
+            SendMqRestAPI.getMutasi(accountnumber);
+            return new ResponseEntity<>(restApiReceive.RecvMutasiUser(), HttpStatus.OK);
+        }catch (Exception e){
+            System.out.println("error = " + e);
+            JSONObject object = new JSONObject();
+            object.put("response",400);
+            object.put("status","Error");
+            object.put("message","Error on get Saldo");
+            return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     //--------------------------Delete Data Nasabah by Id-------------------------------------
@@ -114,6 +166,5 @@ public class RestAPIController {
 
         }
     }
-
 
 }

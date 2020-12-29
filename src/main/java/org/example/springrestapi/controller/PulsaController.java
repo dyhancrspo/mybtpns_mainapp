@@ -32,7 +32,7 @@ public class PulsaController {
 
     @GetMapping("/pulsa/xl")
     public List<Object> getPulsaXL() {
-        Object[] PulsaXl = restTemplate.getForObject(urlindosat, Object[].class);
+        Object[] PulsaXl = restTemplate.getForObject(urlxl, Object[].class);
         return Arrays.asList(PulsaXl);
     }
 }

@@ -1,4 +1,4 @@
-package org.example.database.entities;
+package org.example.bankserver.entities;
 
 
 import javax.persistence.*;

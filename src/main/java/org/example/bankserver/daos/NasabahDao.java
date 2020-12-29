@@ -1,11 +1,13 @@
-package org.example.database.daos;
+package org.example.bankserver.daos;
 
-import org.example.database.entities.Nasabah;
+import org.example.bankserver.entities.Mutasi;
+import org.example.bankserver.entities.Nasabah;
 
 import com.google.gson.Gson;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -26,7 +28,6 @@ public class NasabahDao {
         return entityManager.createQuery("SELECT a FROM Nasabah a", Nasabah.class).getResultList();
     }
 
-
     public Nasabah findByRekening(String nasabahString) {
         Nasabah nsb = new Gson().fromJson(nasabahString, Nasabah.class);
         Nasabah nasabah;
@@ -39,7 +40,6 @@ public class NasabahDao {
         return nasabah;
     }
 
-
     public Nasabah findId(String idString) {
         Nasabah  nasabah;
         try {
@@ -51,6 +51,31 @@ public class NasabahDao {
         return nasabah;
     }
 
+
+    public Nasabah findUser(String username) {
+        try {
+            String select = "SELECT a FROM Nasabah a WHERE username=:username";
+            Query query = entityManager.createQuery(select, Nasabah.class);
+            query.setParameter("username", username);
+            System.out.println("debug : "+ (Nasabah)query.getSingleResult());
+            return (Nasabah) query.getSingleResult();
+        } catch (NoResultException e){
+            return null;
+        }
+    }
+
+
+    public Integer getSaldo(String username) {
+        try {
+            String select = "SELECT balance FROM Nasabah WHERE username=:username";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("username", username);
+            System.out.println("debug : "+ (Integer)query.getSingleResult());
+            return (Integer) query.getSingleResult();
+        } catch (NoResultException e){
+            return null;
+        }
+    }
 
     public void persist(String nasabahString){
         Nasabah nasabah = new Gson().fromJson(nasabahString, Nasabah.class);
@@ -72,8 +97,6 @@ public class NasabahDao {
         Nasabah nasabah = entityManager.find(Nasabah.class, Long.valueOf(id));
         entityManager.remove(nasabah);
     }
-
-
 
     public boolean isRegistered(String nasabahString) {
         List<Nasabah> listAllNasabah = getAllNsb();
@@ -100,5 +123,18 @@ public class NasabahDao {
         }
         return canLogin;
     }
+
+
+//   public List<Mutasi> getMutasi(String accountnumber) {
+//        try {
+//            String select = "SELECT a FROM Mutasi a WHERE accountnumber=:accountnumber";
+//            Query query = entityManager.createQuery(select, org.example.bankserver.entities.Mutasi.class);
+//            query.setParameter("accountnumber", accountnumber);
+//            System.out.println("debug : "+ (List<Mutasi>)query.getResultList());
+//            return (List<Mutasi>) query.getResultList();
+//        } catch (NoResultException e){
+//            return null;
+//        }
+//    }
 
 }

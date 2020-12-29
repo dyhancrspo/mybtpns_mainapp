@@ -1,4 +1,4 @@
-package org.example.database.rabbitmq;
+package org.example.bankserver.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
-public class DatabaseSendMq {
+public class SenderMq {
     public void sendToRestApi(String message) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -62,5 +62,30 @@ public class DatabaseSendMq {
         }
     }
 
+    public void sendSaldoData(String message) {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.queueDeclare("sendSaldoData", false, false, false, null);
+            channel.basicPublish("", "sendSaldoData", null, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent sendSaldoData'" + message + "'");
+        } catch (Exception e){
+            System.out.println("Error send saldo nasabah : " + e);
+        }
+    }
+
+    public void sendMutasiData(String message) {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.queueDeclare("sendMutasiData", false, false, false, null);
+            channel.basicPublish("", "sendMutasiData", null, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent sendMutasiData '" + message + "'");
+        } catch (Exception e){
+            System.out.println("Error send mutasi nasabah : " + e);
+        }
+    }
 
 }

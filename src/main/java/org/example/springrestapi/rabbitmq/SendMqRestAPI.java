@@ -94,4 +94,34 @@ public class SendMqRestAPI {
             System.out.println(" [x] Sent logoutNasabah : '" + strings + "'");
         }
     }
+
+
+//-----------------------------------  NEW  ------------------------------------------------------
+
+    //Get Saldo Nasabah by Username
+    public static void getSaldoNasabah(String username) throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.queueDeclare("getSaldoNasabah", false, false, false, null);
+            channel.basicPublish("", "getSaldoNasabah", null, username.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent '" + username + "'");
+        }
+    }
+
+    public static void getMutasi(String accountnumber) throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.queueDeclare("getMutasi", false, false, false, null);
+            channel.basicPublish("", "getMutasi", null, accountnumber.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent '" + accountnumber + "'");
+        }
+    }
+
+
+
+
 }

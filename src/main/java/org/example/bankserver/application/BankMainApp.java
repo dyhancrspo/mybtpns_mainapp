@@ -1,17 +1,17 @@
-package org.example.database.application;
+package org.example.bankserver.application;
 
-import org.example.database.rabbitmq.DatabaseRecvMq;
+import org.example.bankserver.rabbitmq.ReceiverMq;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
-public class DatabaseJpaMqMain {
+public class BankMainApp {
 
     public static EntityManager entityManager = Persistence
             .createEntityManagerFactory("nasabah-unit")
             .createEntityManager();
 
-    public static DatabaseRecvMq receiveMq = new DatabaseRecvMq(entityManager);
+    public static ReceiverMq receiveMq = new ReceiverMq(entityManager);
 
     public static void main(String[] args) {
         try{
@@ -23,7 +23,11 @@ public class DatabaseJpaMqMain {
             receiveMq.getAllNasabah();
             receiveMq.findDataById();
 
-            //Session change value of isLogin
+            //Get Nasabah Balance
+            receiveMq.getSaldoNsb();
+            receiveMq.getMutasi();
+
+            //Session
             receiveMq.loginNasabah();
             receiveMq.logoutNasabah();
         }catch (Exception e){

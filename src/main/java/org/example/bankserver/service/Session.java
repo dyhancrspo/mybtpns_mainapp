@@ -1,4 +1,4 @@
-package org.example.database.service;
+package org.example.bankserver.service;
 
 public class Session {
     private boolean LoggedIn;
